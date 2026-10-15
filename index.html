@@ -10,7 +10,7 @@
  <small>Nadi Mohalla · Pali, Rajasthan</small></div>
 </div>
 <header class="topbar"><div class="container nav">
- <a class="brand" href="index.html"><img class="official-inc-logo brand-logo" src="inc-logo.png" alt="Official Indian National Congress logo"><span><b>WARD 30</b><small>Nadi Mohalla · Pali, Rajasthan</small></span></a><div class="nav-party"><img src="assets/inc-logo.png" alt="INC hand symbol"><span>INDIAN NATIONAL CONGRESS</span></div>
+ <a class="brand" href="index.html"><img class="official-inc-logo brand-logo" src="inc-logo.png" alt="Official Indian National Congress logo"><span><b>WARD 30</b><small>Nadi Mohalla · Pali, Rajasthan</small></span></a><div class="nav-party"><img src="inc-logo.png" alt="INC hand symbol"><span>INDIAN NATIONAL CONGRESS</span></div>
  <button id="menuBtn" class="menu" aria-label="Open menu">☰</button><nav id="navLinks">
  <a href="#report" data-en="Register Complaint" data-hi="शिकायत दर्ज करें">Register Complaint</a>
  <a href="track.html" data-en="Track Complaint" data-hi="शिकायत ट्रैक करें">Track Complaint</a>
@@ -41,7 +41,7 @@
 <div class="field"><label for="details" data-en="Describe the issue" data-hi="समस्या का विवरण">Describe the issue</label><textarea id="details" required minlength="10" maxlength="1000" rows="4" placeholder="Please explain the problem clearly..."></textarea></div>
 
 <div class="field"><label data-en="Location (GPS)" data-hi="स्थान (GPS)">Location (GPS)</label><div class="gps-row"><button class="btn secondary" type="button" id="gpsBtn">⌖ Retry GPS location</button><span id="gpsStatus" class="muted tiny">The portal requests your GPS location automatically. Browser permission is required.</span></div><input id="latitude" type="hidden"><input id="longitude" type="hidden"><input id="accuracy" type="hidden"></div>
-<div class="field"><label for="mediaFiles" data-en="Upload photos or videos (optional)" data-hi="फोटो या वीडियो अपलोड करें (वैकल्पिक)">Upload photos or videos (optional)</label><input id="mediaFiles" type="file" accept="image/*,video/*" multiple><small class="muted" data-en="Up to 3 files; each file must be 4 MB or smaller. Media is saved to the connected Google Drive." data-hi="अधिकतम 3 फ़ाइलें; हर फ़ाइल 4 MB या कम हो। मीडिया जुड़े Google Drive में सेव होगा।">Up to 3 files; each file must be 4 MB or smaller. Media is saved to the connected Google Drive.</small><div id="mediaPreview" class="media-preview"></div></div>
+<div class="field"><label for="mediaFiles" data-en="Upload photos or videos (optional)" data-hi="फोटो या वीडियो अपलोड करें (वैकल्पिक)">Upload photos or videos (optional)</label><input id="mediaFiles" type="file" accept="image/*,video/*" capture="environment" multiple><small class="muted" data-en="On mobile, choose Camera to take a photo or record a video. Up to 3 files; each file must be 4 MB or smaller. Media is saved to the connected Google Drive." data-hi="मोबाइल पर फोटो लेने या वीडियो रिकॉर्ड करने के लिए Camera चुनें। अधिकतम 3 फ़ाइलें; हर फ़ाइल 4 MB या कम हो। मीडिया जुड़े Google Drive में सेव होगा।">On mobile, choose Camera to take a photo or record a video. Up to 3 files; each file must be 4 MB or smaller. Media is saved to the connected Google Drive.</small><div id="mediaPreview" class="media-preview"></div></div>
 <label class="checkline"><input id="consent" type="checkbox" required><span data-en="I confirm these details are correct and agree to share them with the ward complaint team." data-hi="मैं पुष्टि करता/करती हूँ कि जानकारी सही है और इसे वार्ड शिकायत टीम के साथ साझा करने की सहमति देता/देती हूँ।">I confirm these details are correct and agree to share them with the ward complaint team.</span></label>
 <button class="btn primary full" type="submit" id="submitBtn" data-en="Submit Complaint →" data-hi="शिकायत भेजें →">Submit Complaint →</button><div id="formMessage" aria-live="polite"></div><p class="muted tiny">Do not submit emergencies here. Contact the appropriate emergency service.</p>
 </form>
@@ -74,6 +74,7 @@
  <div class="footer-credit"><div class="container footer-credit-inner">
   <p class="designed-line"><span></span> Designed By <strong>E-TECH</strong> <span></span></p>
   <p class="founder-line">Founder <strong>MOHD SOHAIL</strong><i></i> Contact <a href="tel:7240610313">7240610313</a></p>
-  
+  <p class="copyright-line">@ward30 · All Rights Reserved</p>
+ </div></div>
 </footer>
 <script src="config.js"></script><script src="app.js"></script></body></html>
