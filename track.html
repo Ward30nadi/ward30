@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Track Complaint · Ward 30</title><link rel="icon" href="assets/inc-logo.png" type="image/png"><link rel="stylesheet" href="style.css"></head><body>
+<div class="language-modal" id="languageModal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+ <div class="language-box"><img class="official-inc-logo modal-inc-logo" src="assets/inc-logo.png" alt="Indian National Congress logo"><h2 id="welcomeTitle">Welcome to Ward 30</h2><p id="welcomeText">Choose your preferred language to continue.</p>
+ <div class="language-actions"><button class="btn primary" onclick="setLanguage('en')">English</button><button class="btn secondary" onclick="setLanguage('hi')">हिन्दी</button></div>
+ <small>Nadi Mohalla · Pali, Rajasthan</small></div>
+</div>
+
+<header class="topbar"><div class="container nav"><a class="brand" href="index.html"><img class="official-inc-logo brand-logo" src="assets/inc-logo.png" alt="Indian National Congress official hand symbol"><span><b>WARD 30</b><small>Nadi Mohalla · Pali, Rajasthan</small></span></a><button class="menu" id="menuBtn">☰</button><nav id="navLinks"><a href="index.html#report">Register Complaint</a><a href="track.html">Track Complaint</a><a href="recent.html">Recent Complaints</a><button class="lang-switch" onclick="toggleLanguage()">EN / हिन्दी</button></nav></div></header>
+<div class="page-head"><div class="container"><h1 data-en="Track your complaint" data-hi="अपनी शिकायत ट्रैक करें">Track your complaint</h1><p data-en="Enter your complaint ID to check the latest status." data-hi="नवीनतम स्थिति देखने के लिए शिकायत ID दर्ज करें।">Enter your complaint ID to check the latest status.</p></div></div>
+<main class="simple-section"><div class="card simple-card"><form id="trackForm"><div class="field"><label for="complaintNo">Complaint ID</label><input id="complaintNo" required placeholder="W30-2026-00001"></div><button class="btn primary">Check status →</button></form><div id="result" style="margin-top:20px"></div></div></main><footer class="site-footer">
+ <div class="footer-ward"><div class="container footer-ward-inner">
+  <a class="brand footer-brand" href="index.html"><img class="official-inc-logo brand-logo" src="assets/inc-logo.png" alt="Indian National Congress official hand symbol"><span><b>WARD 30</b><small>Nadi Mohalla · Pali, Rajasthan</small></span></a>
+  <span class="footer-party-name">INDIAN NATIONAL CONGRESS</span>
+ </div></div>
+ <div class="footer-credit"><div class="container footer-credit-inner">
+  <p class="designed-line"><span></span> Designed By <strong>E-TECH</strong> <span></span></p>
+  <p class="founder-line">Founder <strong>MOHD SOHAIL</strong><i></i> Contact <a href="tel:7240610313">7240610313</a></p>
+  <p class="footer-disclaimer">Community information and complaint portal. Party affiliation and profiles are administrator-provided; this is not an official government website.</p>
+  <p class="copyright-line">@ward30 · All Rights Reserved</p>
+ </div></div>
+</footer><script src="config.js"></script><script src="app.js"></script><script>
+document.getElementById('trackForm').addEventListener('submit',async e=>{e.preventDefault();const out=document.getElementById('result');out.textContent='Checking…';try{const d=await api('trackComplaint',{complaintNo:document.getElementById('complaintNo').value.trim()});const x=d.complaint;out.innerHTML=`<div class="complaint-item"><h3>${escapeHtml(x.complaintNo)}</h3><p><b>Status:</b> <span class="status ${x.status==='Solved'?'solved':x.status==='In Progress'?'progress':''}">${escapeHtml(x.status)}</span></p><p><b>Category:</b> ${escapeHtml(x.category)}<br><b>Area:</b> ${escapeHtml(x.area)}</p><p>${escapeHtml(x.details)}</p><small class="muted">Last updated: ${escapeHtml(x.updatedAt)}</small></div>`}catch(err){out.innerHTML='<div class="error">'+escapeHtml(err.message)+'</div>'}});
+</script></body></html>

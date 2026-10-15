@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#168044"><title>Ward 30 • Nadi Mohalla | INC Community Portal</title>
+<link rel="icon" href="assets/inc-logo.png" type="image/png"><link rel="stylesheet" href="style.css">
+</head><body>
+<div class="language-modal" id="languageModal" role="dialog" aria-modal="true">
+ <div class="language-box"><img class="official-inc-logo modal-inc-logo" src="assets/inc-logo.png" alt="Official Indian National Congress logo"><h2 id="welcomeTitle">Welcome to Ward 30</h2><p id="welcomeText">Choose your preferred language to continue.</p>
+ <div class="language-actions"><button class="btn primary" onclick="setLanguage('en')">English</button><button class="btn secondary" onclick="setLanguage('hi')">हिन्दी</button></div>
+ <small>Nadi Mohalla · Pali, Rajasthan</small></div>
+</div>
+<header class="topbar"><div class="container nav">
+ <a class="brand" href="index.html"><img class="official-inc-logo brand-logo" src="assets/inc-logo.png" alt="Official Indian National Congress logo"><span><b>WARD 30</b><small>Nadi Mohalla · Pali, Rajasthan</small></span></a><div class="nav-party"><img src="assets/inc-logo.png" alt="INC hand symbol"><span>INDIAN NATIONAL CONGRESS</span></div>
+ <button id="menuBtn" class="menu" aria-label="Open menu">☰</button><nav id="navLinks">
+ <a href="#report" data-en="Register Complaint" data-hi="शिकायत दर्ज करें">Register Complaint</a>
+ <a href="track.html" data-en="Track Complaint" data-hi="शिकायत ट्रैक करें">Track Complaint</a>
+ <a href="recent.html" data-en="Recent Complaints" data-hi="हाल की शिकायतें">Recent Complaints</a>
+ <button class="lang-switch" onclick="toggleLanguage()">EN / हिन्दी</button>
+ </nav>
+</div></header>
+<main>
+<section class="campaign-banner-section" aria-label="Ward 30 Nadi Mohalla banner">
+  <div class="container campaign-banner-wrap">
+    <img class="campaign-banner-image" src="assets/ward30-campaign-banner.png" alt="Ward 30 Nadi Mohalla banner featuring Mohsin Khatri, Parshad Ward 30, and Mohd Javed, Ex-Secretary, District Congress Committee (DCC), Pali" loading="eager" fetchpriority="high">
+  </div>
+</section>
+<section class="hero"><div class="hero-glow"></div><div class="container hero-grid">
+ <div class="hero-copy"><div class="eyebrow"><span class="pulse"></span><span data-en="WARD 30 · INDIAN NATIONAL CONGRESS" data-hi="वार्ड 30 · भारतीय राष्ट्रीय कांग्रेस">WARD 30 · INDIAN NATIONAL CONGRESS</span></div>
+ <h1 data-en="Ward 30, working for <em>every neighbour.</em>" data-hi="वार्ड 30, <em>हर निवासी के लिए।</em>">Ward 30, working for <em>every neighbour.</em></h1>
+ <p data-en="Report local issues, follow complaint progress, and help make Nadi Mohalla cleaner, safer and better connected." data-hi="स्थानीय समस्याओं की शिकायत करें, उनकी स्थिति देखें और नाड़ी मोहल्ला को स्वच्छ, सुरक्षित और बेहतर बनाने में मदद करें।">Report local issues, follow complaint progress, and help make Nadi Mohalla cleaner, safer and better connected.</p>
+ <div class="hero-actions"><a class="btn primary" href="#report" data-en="＋ Register a Complaint" data-hi="＋ शिकायत दर्ज करें">＋ Register a Complaint</a><a class="btn ghost" href="track.html" data-en="Track Status →" data-hi="स्थिति देखें →">Track Status →</a></div>
+ <div class="trust-line"><span>✓</span> <span data-en="Simple · Mobile friendly · Bilingual" data-hi="आसान · मोबाइल अनुकूल · द्विभाषी">Simple · Mobile friendly · Bilingual</span></div>
+ </div>
+
+</div></section>
+<section class="stats"><div class="container stats-grid"><div><span class="stat-icon">◎</span><strong>24/7</strong><small data-en="Submit anytime" data-hi="कभी भी शिकायत करें">Submit anytime</small></div><div><span class="stat-icon">↗</span><strong data-en="Trackable" data-hi="ट्रैकिंग">Trackable</strong><small data-en="Check your complaint" data-hi="शिकायत की स्थिति देखें">Check your complaint</small></div><div><span class="stat-icon">हिं</span><strong>2</strong><small data-en="English & Hindi" data-hi="हिन्दी और अंग्रेज़ी">English & Hindi</small></div></div></section>
+<section class="section" id="report"><div class="container"><div class="section-heading"><div><div class="eyebrow">WARD 30 · NADI MOHALLA</div><h2 data-en="How can we help?" data-hi="हम आपकी क्या मदद कर सकते हैं?">How can we help?</h2><p data-en="Choose an issue and send the details to the ward team." data-hi="समस्या चुनें और विवरण वार्ड टीम को भेजें।">Choose an issue and send the details to the ward team.</p></div><div class="heading-symbol">✳</div></div>
+<div class="report-layout"><form id="complaintForm" class="card form-card"><h3 data-en="Register a complaint" data-hi="शिकायत दर्ज करें">Register a complaint</h3>
+<div class="field-row"><div class="field"><label for="name" data-en="Full name" data-hi="पूरा नाम">Full name</label><input id="name" required maxlength="80" placeholder="Your name"></div><div class="field"><label for="mobile" data-en="Mobile number" data-hi="मोबाइल नंबर">Mobile number</label><input id="mobile" required inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" placeholder="10-digit mobile number"></div></div>
+<div class="field-row"><div class="field"><label for="category" data-en="Complaint category" data-hi="शिकायत की श्रेणी">Complaint category</label><select id="category" required><option value="">Select category</option><option> सफाई / Sanitation</option><option>Road / सड़क</option><option>Street light / स्ट्रीट लाइट</option><option>Drainage / नाली</option><option>Water supply / पानी</option><option>Garbage collection / कचरा</option><option>Other / अन्य</option></select></div><div class="field"><label for="area" data-en="Street / nearby landmark" data-hi="गली / नज़दीकी स्थान">Street / nearby landmark</label><input id="area" required maxlength="120" placeholder="Your street or landmark"></div></div>
+<div class="field"><label for="details" data-en="Describe the issue" data-hi="समस्या का विवरण">Describe the issue</label><textarea id="details" required minlength="10" maxlength="1000" rows="4" placeholder="Please explain the problem clearly..."></textarea></div>
+
+<div class="field"><label data-en="Location (GPS)" data-hi="स्थान (GPS)">Location (GPS)</label><div class="gps-row"><button class="btn secondary" type="button" id="gpsBtn">⌖ Retry GPS location</button><span id="gpsStatus" class="muted tiny">The portal requests your GPS location automatically. Browser permission is required.</span></div><input id="latitude" type="hidden"><input id="longitude" type="hidden"><input id="accuracy" type="hidden"></div>
+<div class="field"><label for="mediaFiles" data-en="Upload photos or videos (optional)" data-hi="फोटो या वीडियो अपलोड करें (वैकल्पिक)">Upload photos or videos (optional)</label><input id="mediaFiles" type="file" accept="image/*,video/*" multiple><small class="muted" data-en="Up to 3 files; each file must be 4 MB or smaller. Media is saved to the connected Google Drive." data-hi="अधिकतम 3 फ़ाइलें; हर फ़ाइल 4 MB या कम हो। मीडिया जुड़े Google Drive में सेव होगा।">Up to 3 files; each file must be 4 MB or smaller. Media is saved to the connected Google Drive.</small><div id="mediaPreview" class="media-preview"></div></div>
+<label class="checkline"><input id="consent" type="checkbox" required><span data-en="I confirm these details are correct and agree to share them with the ward complaint team." data-hi="मैं पुष्टि करता/करती हूँ कि जानकारी सही है और इसे वार्ड शिकायत टीम के साथ साझा करने की सहमति देता/देती हूँ।">I confirm these details are correct and agree to share them with the ward complaint team.</span></label>
+<button class="btn primary full" type="submit" id="submitBtn" data-en="Submit Complaint →" data-hi="शिकायत भेजें →">Submit Complaint →</button><div id="formMessage" aria-live="polite"></div><p class="muted tiny">Do not submit emergencies here. Contact the appropriate emergency service.</p>
+</form>
+<div class="side-stack"><div class="card issue-card"><span class="issue-icon">♧</span><h3 data-en="What you can report" data-hi="किन समस्याओं की शिकायत कर सकते हैं">What you can report</h3><ul><li>Sanitation and garbage</li><li>Roads and drainage</li><li>Street lights</li><li>Water supply issues</li><li>Other local civic issues</li></ul></div><div class="card note-card"><div class="note-icon">↗</div><h3 data-en="Keep your complaint ID" data-hi="शिकायत ID संभालकर रखें">Keep your complaint ID</h3><p data-en="After submitting, save the complaint number to check updates later." data-hi="शिकायत भेजने के बाद उसकी ID सुरक्षित रखें ताकि बाद में स्थिति देख सकें।">After submitting, save the complaint number to check updates later.</p><a href="track.html" class="text-link" data-en="Track a complaint →" data-hi="शिकायत ट्रैक करें →">Track a complaint →</a></div></div></div>
+</div></section>
+<section class="how-section" aria-labelledby="howTitle">
+ <div class="container">
+  <div class="how-heading"><span class="how-gear" aria-hidden="true">⚙</span><h2 id="howTitle" data-en="How It Works?" data-hi="यह कैसे काम करता है?">How It Works?</h2></div>
+  <div class="how-steps">
+   <div class="how-step"><div class="how-icon orange">▤</div><h3><span>1.</span> <span data-en="Register Issue" data-hi="समस्या दर्ज करें">Register Issue</span></h3><p data-en="Fill the form & upload image/video" data-hi="फ़ॉर्म भरें और फोटो/वीडियो अपलोड करें">Fill the form & upload image/video</p></div>
+   <div class="how-arrow" aria-hidden="true">→</div>
+   <div class="how-step"><div class="how-icon green">◎</div><h3><span>2.</span> <span data-en="WhatsApp Alert" data-hi="व्हाट्सऐप सूचना">WhatsApp Alert</span></h3><p data-en="Issue details are sent to the configured ward contact" data-hi="समस्या का विवरण कॉन्फ़िगर किए गए वार्ड संपर्क को भेजा जाता है">Issue details are sent to the configured ward contact</p></div>
+   <div class="how-arrow" aria-hidden="true">→</div>
+   <div class="how-step"><div class="how-icon teal">⚙</div><h3><span>3.</span> <span data-en="Action Taken" data-hi="कार्रवाई की जाती है">Action Taken</span></h3><p data-en="The team reviews and works on the issue" data-hi="टीम समस्या की समीक्षा करके काम करती है">The team reviews and works on the issue</p></div>
+   <div class="how-arrow" aria-hidden="true">→</div>
+   <div class="how-step"><div class="how-icon green">✓</div><h3><span>4.</span> <span data-en="Problem Resolved" data-hi="समस्या का समाधान">Problem Resolved</span></h3><p data-en="Status is updated for the resident" data-hi="निवासी के लिए स्थिति अपडेट की जाती है">Status is updated for the resident</p></div>
+  </div>
+  <div class="resolution-box"><div class="resolution-clock" aria-hidden="true">◷</div><div><h3 data-en="Expected resolution target" data-hi="समाधान का अनुमानित समय">Expected resolution target</h3><strong data-en="Usually within 3 to 7 days." data-hi="आमतौर पर 3 से 7 दिनों में।">Usually within 3 to 7 days.</strong><p data-en="In special circumstances, resolution may take up to 1 month. Actual timing depends on the issue and the responsible department." data-hi="विशेष परिस्थितियों में समाधान में 1 महीने तक लग सकता है। वास्तविक समय समस्या और जिम्मेदार विभाग पर निर्भर करेगा।">In special circumstances, resolution may take up to 1 month. Actual timing depends on the issue and the responsible department.</p></div></div>
+ </div>
+</section>
+<section class="bottom-cta"><div class="container cta-inner"><div><h2 data-en="Small actions. Better neighbourhood." data-hi="छोटे कदम। बेहतर मोहल्ला।">Small actions. Better neighbourhood.</h2><p data-en="Your report helps the ward team understand local concerns." data-hi="आपकी शिकायत से वार्ड टीम को स्थानीय समस्याएँ समझने में मदद मिलती है।">Your report helps the ward team understand local concerns.</p></div><a href="track.html" class="btn light" data-en="Track Complaint" data-hi="शिकायत ट्रैक करें">Track Complaint</a></div></section>
+</main>
+<footer class="site-footer">
+ <div class="footer-ward">
+  <div class="container footer-ward-inner">
+   <div class="brand footer-brand"><img class="official-inc-logo brand-logo" src="assets/inc-logo.png" alt="Official Indian National Congress logo"><span><b>WARD 30</b><small>Nadi Mohalla · Pali, Rajasthan</small></span></div>
+   <span class="footer-party-name">INDIAN NATIONAL CONGRESS</span>
+  </div>
+ </div>
+ <div class="footer-credit"><div class="container footer-credit-inner">
+  <p class="designed-line"><span></span> Designed By <strong>E-TECH</strong> <span></span></p>
+  <p class="founder-line">Founder <strong>MOHD SOHAIL</strong><i></i> Contact <a href="tel:7240610313">7240610313</a></p>
+  <p class="footer-disclaimer">Community information and complaint portal. Party affiliation and profiles are administrator-provided; this is not an official government website.</p>
+  <p class="copyright-line">@ward30 · All Rights Reserved</p>
+ </div></div>
+</footer>
+<script src="config.js"></script><script src="app.js"></script></body></html>
