@@ -60,20 +60,19 @@ form?.addEventListener('submit',async e=>{
  e.preventDefault();const msg=document.getElementById('formMessage'),btn=document.getElementById('submitBtn');const selected=selectedMedia();
  if(selected.length>3){msg.className='error';msg.textContent='Please select no more than 3 files.';return}
  for(const f of selected){const v=String(f.type||'').startsWith('video/'),lim=v?1.5*1024*1024:12*1024*1024;if(f.size>lim){msg.className='error';msg.textContent=(v?'Video':'Photo')+' exceeds the '+(v?'1.5 MB':'12 MB')+' original-file limit. Please choose a smaller file.';return}}
- // Open a tab synchronously during the user gesture; later navigation is less likely to be blocked.
- const waTab=window.open('about:blank','_blank');if(waTab){try{waTab.document.write('<title>Submitting complaint…</title><p style="font-family:Arial;padding:24px">Your complaint is being submitted. This tab will open WhatsApp after successful registration.</p>')}catch(_){}}
+ // Keep submission in this page; WhatsApp is an optional button after success.
  btn.disabled=true;btn.textContent=currentLang==='hi'?'भेजा जा रहा है…':'Submitting…';msg.className='';msg.textContent='Preparing attachments and submitting complaint…';
  const payload={...complaintPayloadFromForm(),ward:'30',locality:'Nadi Mohalla, Pali, Rajasthan'};
  try{
-  if(selected.length){payload.media=[];for(let i=0;i<selected.length;i++){msg.textContent='Preparing attachment '+(i+1)+' of '+selected.length+'…';payload.media.push(await fileAsDataURL(selected[i]));}}
+  if(selected.length){msg.textContent='Preparing '+selected.length+' attachment(s)…';payload.media=await Promise.all(selected.map(fileAsDataURL));}
   msg.textContent='Saving complaint…';const data=await api('submitComplaint',payload);
   msg.className='success';msg.innerHTML=`<b>Complaint registered successfully.</b><br>Complaint ID: <b>${escapeHtml(data.complaintNo)}</b><br>Save this ID to track updates later.`;
   if(data.mediaUrls?.length)msg.innerHTML+=`<br>${data.mediaUrls.length} media file(s) saved to Drive.`;
   const waNumber=window.PORTAL_CONFIG?.PARSHAD_WHATSAPP_NUMBER||'',waText=complaintWhatsAppText(payload,data.complaintNo),waUrl=whatsappLink(waNumber,waText);
-  if(data.whatsappSent){msg.innerHTML+='<br><b>WhatsApp alert sent automatically to the Parshad.</b>';if(waTab)waTab.close();}
-  else if(waUrl){msg.innerHTML+='<br><b>Opening WhatsApp…</b><br>If it does not open, use the WhatsApp button below.';const a=document.createElement('a');a.className='btn primary whatsapp-btn';a.href=waUrl;a.target='_blank';a.rel='noopener';a.textContent='Open WhatsApp to send complaint';msg.appendChild(a);if(waTab){waTab.location.href=waUrl;}else{window.location.href=waUrl;}}
-  else{if(waTab)waTab.close();msg.innerHTML+='<br><span class="muted">Configure the Parshad WhatsApp number in config.js.</span>';}
+  if(data.whatsappSent){msg.innerHTML+='<br><b>WhatsApp alert sent automatically to the Parshad.</b>'; }
+  else if(waUrl){msg.innerHTML+='<br><span class="muted">Your complaint is saved. WhatsApp is optional.</span><br>';const a=document.createElement('a');a.className='btn primary whatsapp-btn';a.href=waUrl;a.target='_blank';a.rel='noopener';a.textContent='Open WhatsApp to send complaint';msg.appendChild(a);}
+  else{msg.innerHTML+='<br><span class="muted">Configure the Parshad WhatsApp number in config.js.</span>';}
   form.reset();[photoInput,videoInput,mediaInput].forEach(x=>{if(x)x.value=''});previewUrls.forEach(u=>URL.revokeObjectURL(u));previewUrls=[];document.getElementById('mediaPreview').innerHTML='';document.getElementById('latitude').value='';document.getElementById('longitude').value='';document.getElementById('accuracy').value='';document.getElementById('gpsStatus').textContent='Location not captured for next complaint yet.';
- }catch(err){if(waTab)waTab.close();msg.className='error';msg.innerHTML=`<b>Complaint could not be registered:</b> ${escapeHtml(err.message)}<br><small>Please retry. WhatsApp is opened only after the backend confirms successful registration.</small>`;}
+ }catch(err){msg.className='error';msg.innerHTML=`<b>Complaint could not be registered:</b> ${escapeHtml(err.message)}<br><small>Please retry. WhatsApp is opened only after the backend confirms successful registration.</small>`;}
  finally{btn.disabled=false;btn.textContent=currentLang==='hi'?'शिकायत भेजें →':'Submit Complaint →';}
 });
