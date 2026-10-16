@@ -88,3 +88,43 @@
 
 /* Shared Ward 30 footer copyright */
 .copyright-line{margin:12px 0 0;text-align:center;font-size:.82rem;letter-spacing:.02em;opacity:.86;color:inherit}
+
+/* Ward 30 responsive-width repair: ensure the page uses the available viewport */
+html, body { width: 100%; min-width: 0; max-width: none; overflow-x: clip; }
+body { font-size: 16px; }
+main, header.topbar, footer, .campaign-banner-section, .hero, .stats, .section, .how-section, .bottom-cta { width: 100%; max-width: none; }
+.container { width: min(1120px, calc(100% - 40px)); max-width: 1120px; margin-left: auto; margin-right: auto; }
+.campaign-banner-wrap { width: 100%; }
+.campaign-banner-image { display: block; width: 100%; height: auto; max-width: 100%; object-fit: contain; }
+.hero-grid, .report-layout { width: 100%; min-width: 0; }
+.hero-copy, .form-card, .side-stack, .section-heading { min-width: 0; }
+.field input, .field select, .field textarea { min-width: 0; max-width: 100%; }
+img, video { max-width: 100%; }
+@media (max-width: 800px) {
+  .container { width: calc(100% - 28px); }
+  .nav { width: calc(100% - 28px); min-height: 64px; height: auto; }
+  .hero { padding: 34px 0 38px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .hero h1 { font-size: clamp(30px, 8vw, 42px); line-height: 1.12; overflow-wrap: anywhere; }
+  .hero-copy > p { font-size: 14px; }
+  .hero-actions { gap: 8px; }
+  .hero-actions .btn { max-width: 100%; padding: 12px 13px; }
+  .profile-stack { width: 100%; }
+  .parshad-card, .candidate-card { max-width: 100%; }
+  .report-layout { grid-template-columns: minmax(0, 1fr); }
+  .form-card, .issue-card, .note-card { padding: 18px; }
+  .field-row { grid-template-columns: minmax(0, 1fr); }
+  .stats-grid { width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stats-grid > div { min-width: 0; padding: 6px 8px; }
+  .stats-grid strong, .stats-grid small { overflow-wrap: anywhere; }
+  .footer-ward-inner, .footer-credit-inner { width: calc(100% - 28px); }
+}
+@media (max-width: 380px) {
+  .container { width: calc(100% - 24px); }
+  .brand { gap: 7px; }
+  .brand small { font-size: 9px; }
+  .section { padding: 34px 0; }
+  .section-heading h2 { font-size: 25px; }
+  .stats-grid > div { grid-template-columns: 1fr; text-align: center; justify-items: center; gap: 4px; }
+  .stat-icon { grid-row: auto; }
+}
