@@ -205,3 +205,11 @@ input, select, textarea { max-width:100%; }
 
 .admin-page td a:not(.btn) { color:#176b52; font-weight:700; text-decoration:underline; overflow-wrap:anywhere; }
 .admin-page table { min-width:1040px; }
+
+/* Reliable, accessible media picker controls */
+.file-picker{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;overflow:hidden!important;pointer-events:none!important;left:-10000px!important}
+.media-capture-actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.media-capture-actions .btn{min-height:44px;touch-action:manipulation}
+.media-preview video{max-width:100%;object-fit:contain}
+#formMessage .btn{margin-top:10px}
+#submitBtn:disabled{opacity:.65;cursor:wait;transform:none}
