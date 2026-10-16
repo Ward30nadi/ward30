@@ -20,27 +20,60 @@ if(navigator.permissions?.query){navigator.permissions.query({name:'geolocation'
 // Location is requested only after the visitor explicitly taps the GPS button or focuses the location field.
 const mediaInput=document.getElementById('mediaFiles');
 const photoInput=document.getElementById('photoCapture'),videoInput=document.getElementById('videoCapture');
-function selectedMedia(){return [...(photoInput?.files||[]),...(videoInput?.files||[]),...(mediaInput?.files||[])].slice(0,4)}
-let previewUrls=[];function refreshMediaPreview(changed){const files=selectedMedia(),preview=document.getElementById('mediaPreview');previewUrls.forEach(u=>URL.revokeObjectURL(u));previewUrls=[];preview.innerHTML='';if(files.length>3){if(changed)changed.value='';preview.textContent='Choose up to 3 files total.';return}for(const file of files){if(file.size>4*1024*1024){if(changed)changed.value='';preview.textContent='Each photo/video must be 4 MB or smaller.';return}const url=URL.createObjectURL(file);previewUrls.push(url);const el=document.createElement(file.type.startsWith('video/')?'video':'img');el.src=url;if(el.tagName==='VIDEO'){el.controls=true;el.playsInline=true}el.style.maxWidth='140px';el.style.maxHeight='120px';preview.appendChild(el)}}
+function selectedMedia(){return [...(photoInput?.files||[]),...(videoInput?.files||[]),...(mediaInput?.files||[])].filter(Boolean).slice(0,3)}
+const takePhotoBtn=document.getElementById('takePhotoBtn'),recordVideoBtn=document.getElementById('recordVideoBtn'),chooseMediaBtn=document.getElementById('chooseMediaBtn');
+// Invoke the native picker directly from the user's tap; this is required by mobile browsers.
+takePhotoBtn?.addEventListener('click',()=>photoInput?.click());
+recordVideoBtn?.addEventListener('click',()=>videoInput?.click());
+chooseMediaBtn?.addEventListener('click',()=>mediaInput?.click());
+let previewUrls=[];
+function refreshMediaPreview(changed){
+ const files=selectedMedia(),preview=document.getElementById('mediaPreview');
+ previewUrls.forEach(u=>URL.revokeObjectURL(u));previewUrls=[];preview.innerHTML='';
+ if(files.length>3){if(changed)changed.value='';preview.textContent='Choose up to 3 files total.';return}
+ for(const file of files){
+  const isVideo=String(file.type||'').startsWith('video/'),limit=isVideo?1.5*1024*1024:12*1024*1024;
+  if(file.size>limit){if(changed)changed.value='';preview.textContent=(isVideo?'Video':'Photo')+' is too large. Maximum selected-file size: '+(isVideo?'1.5 MB':'12 MB')+'. '+(isVideo?'Record a shorter video.':'Choose a smaller photo.');return}
+  const url=URL.createObjectURL(file);previewUrls.push(url);const el=document.createElement(isVideo?'video':'img');el.src=url;
+  if(isVideo){el.controls=true;el.playsInline=true;el.preload='metadata'}
+  el.style.maxWidth='140px';el.style.maxHeight='120px';preview.appendChild(el);
+ }
+}
 [mediaInput,photoInput,videoInput].forEach(input=>input?.addEventListener('change',()=>refreshMediaPreview(input)));
 
 async function fileAsDataURL(file){
-  const type=String(file.type||'').toLowerCase();
-  if(!(type.startsWith('image/')||type.startsWith('video/')))throw new Error('Only photo and video files are allowed.');
-  if(type.startsWith('image/') && !['image/jpeg','image/png','image/webp','image/heic','image/heif'].includes(type))throw new Error('This image format is not supported. Please use JPG, PNG or WebP.');
-  let uploadFile=file;
-  // Compress photos in-browser to speed up upload while keeping the original selected file untouched.
-  if(type.startsWith('image/') && !['image/heic','image/heif'].includes(type) && typeof createImageBitmap==='function'){
-    try{
-      const bitmap=await createImageBitmap(file);const maxSide=1600;const scale=Math.min(1,maxSide/Math.max(bitmap.width,bitmap.height));
-      if(scale<1 || file.size>700*1024){const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));const ctx=canvas.getContext('2d',{alpha:false});ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.78));if(blob)uploadFile=new File([blob],file.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg'});}
-      bitmap.close();
-    }catch(_){ /* Fall back to the original image if compression is unsupported. */ }
+ const type=String(file.type||'').toLowerCase(),isVideo=type.startsWith('video/');
+ if(!(type.startsWith('image/')||isVideo))throw new Error('Only photo and video files are allowed.');
+ const limit=isVideo?1.5*1024*1024:2.5*1024*1024;
+ let uploadFile=file;
+ if(!isVideo){
+  if(['image/heic','image/heif'].includes(type))throw new Error('This phone selected HEIC/HEIF. Change camera format to Most Compatible/JPEG, then retry.');
+  if(typeof createImageBitmap==='function'){
+   let bitmap;
+   try{bitmap=await createImageBitmap(file);const maxSide=1280,scale=Math.min(1,maxSide/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));const ctx=canvas.getContext('2d',{alpha:false});ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.68));if(blob)uploadFile=new File([blob],file.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg'});}catch(_){/* fallback to selected image */}finally{if(bitmap)bitmap.close();}
   }
-  if(uploadFile.size>4*1024*1024)throw new Error('After preparation, each file must be 4 MB or smaller. Please choose a smaller photo/video.');
-  return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve({name:uploadFile.name,mimeType:uploadFile.type||'application/octet-stream',dataUrl:r.result});r.onerror=()=>reject(new Error('Could not read '+file.name));r.readAsDataURL(uploadFile)});
+ }
+ if(uploadFile.size>limit)throw new Error((isVideo?'Video':'Photo')+' is too large after preparation. Maximum '+(isVideo?'1.5 MB':'2.5 MB')+'. '+(isVideo?'Record a shorter clip (about 5–10 seconds) or compress it before upload.':'Choose a smaller photo.'));
+ return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve({name:uploadFile.name,mimeType:uploadFile.type||'application/octet-stream',dataUrl:r.result});r.onerror=()=>reject(new Error('Could not read '+file.name));r.readAsDataURL(uploadFile)});
 }
-form?.addEventListener('submit',async e=>{e.preventDefault();const msg=document.getElementById('formMessage'),btn=document.getElementById('submitBtn');const selected=selectedMedia();if(selected.length>3||selected.some(f=>f.size>4*1024*1024)){msg.className='error';msg.textContent='Please select up to 3 files, each 4 MB or smaller.';return}
-btn.disabled=true;btn.textContent=currentLang==='hi'?'भेजा जा रहा है…':'Submitting…';msg.className='';msg.textContent='';
-const payload={...complaintPayloadFromForm(),ward:'30',locality:'Nadi Mohalla, Pali, Rajasthan'};
-try{if(selected.length){payload.media=[];for(const file of selected){payload.media.push(await fileAsDataURL(file));}}const data=await api('submitComplaint',payload);msg.className='success';msg.innerHTML=`<b>Complaint registered successfully.</b><br>Complaint ID: <b>${escapeHtml(data.complaintNo)}</b><br>Save this ID to track updates later.`;if(data.mediaUrls?.length)msg.innerHTML+=`<br>${data.mediaUrls.length} media file(s) saved to Drive.`;const waNumber=window.PORTAL_CONFIG?.PARSHAD_WHATSAPP_NUMBER||'';const waText=complaintWhatsAppText(payload,data.complaintNo);const waUrl=whatsappLink(waNumber,waText);if(data.whatsappSent){msg.innerHTML+='<br><b>WhatsApp alert sent automatically to the Parshad.</b>'}else if(waUrl){msg.innerHTML+=`<br><a class="btn primary" target="_blank" rel="noopener" href="${waUrl}">Send complaint to Parshad on WhatsApp</a><br><small class="muted">The message includes the sender name, mobile, complaint details and location. Check it before tapping Send. Automatic delivery requires WhatsApp Business API setup.</small>`}else{msg.innerHTML+='<br><span class="muted">To send this complaint to the Parshad, configure the Parshad WhatsApp number in config.js. Automatic sending requires WhatsApp Business API setup.</span>'}form.reset();[photoInput,videoInput,mediaInput].forEach(x=>{if(x)x.value=''});previewUrls.forEach(u=>URL.revokeObjectURL(u));previewUrls=[];document.getElementById('mediaPreview').innerHTML='';document.getElementById('latitude').value='';document.getElementById('longitude').value='';document.getElementById('accuracy').value='';document.getElementById('gpsStatus').textContent='Location not captured for next complaint yet.'}catch(err){msg.className='error';msg.innerHTML=`<b>Complaint could not be registered:</b> ${escapeHtml(err.message)}<br><small>Please try again later or contact the portal administrator. WhatsApp delivery cannot be attempted until the backend is connected.</small>`}finally{btn.disabled=false;btn.textContent=currentLang==='hi'?'शिकायत भेजें →':'Submit Complaint →'}});
+form?.addEventListener('submit',async e=>{
+ e.preventDefault();const msg=document.getElementById('formMessage'),btn=document.getElementById('submitBtn');const selected=selectedMedia();
+ if(selected.length>3){msg.className='error';msg.textContent='Please select no more than 3 files.';return}
+ for(const f of selected){const v=String(f.type||'').startsWith('video/'),lim=v?1.5*1024*1024:12*1024*1024;if(f.size>lim){msg.className='error';msg.textContent=(v?'Video':'Photo')+' exceeds the '+(v?'1.5 MB':'12 MB')+' original-file limit. Please choose a smaller file.';return}}
+ // Open a tab synchronously during the user gesture; later navigation is less likely to be blocked.
+ const waTab=window.open('about:blank','_blank');if(waTab){try{waTab.document.write('<title>Submitting complaint…</title><p style="font-family:Arial;padding:24px">Your complaint is being submitted. This tab will open WhatsApp after successful registration.</p>')}catch(_){}}
+ btn.disabled=true;btn.textContent=currentLang==='hi'?'भेजा जा रहा है…':'Submitting…';msg.className='';msg.textContent='Preparing attachments and submitting complaint…';
+ const payload={...complaintPayloadFromForm(),ward:'30',locality:'Nadi Mohalla, Pali, Rajasthan'};
+ try{
+  if(selected.length){payload.media=[];for(let i=0;i<selected.length;i++){msg.textContent='Preparing attachment '+(i+1)+' of '+selected.length+'…';payload.media.push(await fileAsDataURL(selected[i]));}}
+  msg.textContent='Saving complaint…';const data=await api('submitComplaint',payload);
+  msg.className='success';msg.innerHTML=`<b>Complaint registered successfully.</b><br>Complaint ID: <b>${escapeHtml(data.complaintNo)}</b><br>Save this ID to track updates later.`;
+  if(data.mediaUrls?.length)msg.innerHTML+=`<br>${data.mediaUrls.length} media file(s) saved to Drive.`;
+  const waNumber=window.PORTAL_CONFIG?.PARSHAD_WHATSAPP_NUMBER||'',waText=complaintWhatsAppText(payload,data.complaintNo),waUrl=whatsappLink(waNumber,waText);
+  if(data.whatsappSent){msg.innerHTML+='<br><b>WhatsApp alert sent automatically to the Parshad.</b>';if(waTab)waTab.close();}
+  else if(waUrl){msg.innerHTML+='<br><b>Opening WhatsApp…</b><br>If it does not open, use the WhatsApp button below.';const a=document.createElement('a');a.className='btn primary whatsapp-btn';a.href=waUrl;a.target='_blank';a.rel='noopener';a.textContent='Open WhatsApp to send complaint';msg.appendChild(a);if(waTab){waTab.location.href=waUrl;}else{window.location.href=waUrl;}}
+  else{if(waTab)waTab.close();msg.innerHTML+='<br><span class="muted">Configure the Parshad WhatsApp number in config.js.</span>';}
+  form.reset();[photoInput,videoInput,mediaInput].forEach(x=>{if(x)x.value=''});previewUrls.forEach(u=>URL.revokeObjectURL(u));previewUrls=[];document.getElementById('mediaPreview').innerHTML='';document.getElementById('latitude').value='';document.getElementById('longitude').value='';document.getElementById('accuracy').value='';document.getElementById('gpsStatus').textContent='Location not captured for next complaint yet.';
+ }catch(err){if(waTab)waTab.close();msg.className='error';msg.innerHTML=`<b>Complaint could not be registered:</b> ${escapeHtml(err.message)}<br><small>Please retry. WhatsApp is opened only after the backend confirms successful registration.</small>`;}
+ finally{btn.disabled=false;btn.textContent=currentLang==='hi'?'शिकायत भेजें →':'Submit Complaint →';}
+});
