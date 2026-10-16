@@ -4,5 +4,5 @@
 window.PORTAL_CONFIG = {
   API_URL: "https://script.google.com/macros/s/AKfycbyMHUbPNT0dFMEPN0_yYGhgnuHFrJjwhjv6kAsGTcMtuvzD8qMDwt4PaZGQ4jeuhaHJKQ/exec",
   ADMIN_EMAILS: ["ward30nadi@gmail.com"],
-  PARSHAD_WHATSAPP_NUMBER: "919950880177"
+  PARSHAD_WHATSAPP_NUMBER: "919783372600"
 };
