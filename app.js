@@ -12,12 +12,35 @@ function whatsappShareLink(text){return 'https://wa.me/?text='+encodeURIComponen
 function complaintPayloadFromForm(){return {name:document.getElementById('name').value.trim(),mobile:document.getElementById('mobile').value.trim(),category:document.getElementById('category').value.trim(),area:document.getElementById('area').value.trim(),details:document.getElementById('details').value.trim(),latitude:document.getElementById('latitude').value,longitude:document.getElementById('longitude').value,accuracy:document.getElementById('accuracy').value}}
 function complaintWhatsAppText(payload,complaintNo=''){return `WARD 30 · NADI MOHALLA, PALI — CIVIC COMPLAINT\n${complaintNo?'Complaint ID: '+complaintNo+'\n':''}Name: ${payload.name}\nMobile: ${payload.mobile}\nCategory: ${payload.category}\nStreet/Landmark: ${payload.area}\nDetails: ${payload.details}${payload.latitude&&payload.longitude?'\nGPS: https://maps.google.com/?q='+payload.latitude+','+payload.longitude:''}\n\nSent from Ward 30 complaint portal.`}
 const form=document.getElementById('complaintForm');
-document.getElementById('area')?.addEventListener('focus',()=>{if(!document.getElementById('latitude').value&&!document.getElementById('longitude').value)captureGPS()},{once:true});
-function captureGPS(){return new Promise(resolve=>{const st=document.getElementById('gpsStatus');if(!navigator.geolocation){if(st)st.textContent='GPS is not supported by this browser.';resolve(false);return}if(st)st.textContent='Requesting GPS permission…';navigator.geolocation.getCurrentPosition(pos=>{document.getElementById('latitude').value=pos.coords.latitude;document.getElementById('longitude').value=pos.coords.longitude;document.getElementById('accuracy').value=Math.round(pos.coords.accuracy);if(st)st.textContent=`GPS captured (±${Math.round(pos.coords.accuracy)} m).`;resolve(true);},err=>{if(st)st.textContent=err.code===1?'Location permission denied. You can still submit using your street/landmark.':'Could not get GPS. Check permission or enter your street/landmark.';resolve(false);},{enableHighAccuracy:true,timeout:20000,maximumAge:0})})}
+let gpsRequestInFlight=false, gpsAttempted=false;
+function captureGPS({automatic=false}={}){
+ const lat=document.getElementById('latitude'),lon=document.getElementById('longitude'),acc=document.getElementById('accuracy'),st=document.getElementById('gpsStatus');
+ if(lat?.value&&lon?.value)return Promise.resolve(true);
+ if(gpsRequestInFlight)return Promise.resolve(false);
+ if(!navigator.geolocation){if(st)st.textContent='GPS is not supported by this browser. Enter your street or landmark.';return Promise.resolve(false)}
+ if(!window.isSecureContext){if(st)st.textContent='GPS requires the secure HTTPS website. Open the official https:// link.';return Promise.resolve(false)}
+ gpsRequestInFlight=true;gpsAttempted=true;
+ if(st)st.textContent=automatic?'Requesting device location… please allow location access in your browser.':'Requesting GPS permission…';
+ return new Promise(resolve=>{
+  navigator.geolocation.getCurrentPosition(pos=>{
+   lat.value=pos.coords.latitude;lon.value=pos.coords.longitude;acc.value=Math.round(pos.coords.accuracy);
+   if(st)st.textContent=`Location captured (accuracy about ±${Math.round(pos.coords.accuracy)} m).`;
+   gpsRequestInFlight=false;resolve(true);
+  },err=>{
+   if(st){
+    if(err.code===1)st.textContent='Location permission is blocked. Allow Location for this site in browser settings, then tap Retry GPS location.';
+    else if(err.code===2)st.textContent='Device location is unavailable. Turn on Location/GPS and tap Retry GPS location.';
+    else st.textContent='Location request timed out. Keep Location/GPS on and tap Retry GPS location.';
+   }
+   gpsRequestInFlight=false;resolve(false);
+  },{enableHighAccuracy:false,timeout:12000,maximumAge:120000});
+ });
+}
 const gpsBtn=document.getElementById('gpsBtn');
 gpsBtn?.addEventListener('click',()=>captureGPS());
-if(navigator.permissions?.query){navigator.permissions.query({name:'geolocation'}).then(p=>{if(p.state==='granted'&&!document.getElementById('latitude').value)captureGPS()}).catch(()=>{});}
-// Location is requested only after the visitor explicitly taps the GPS button or focuses the location field.
+// Request GPS automatically when the portal opens. Browser permission and HTTPS are required.
+if(form&&!document.getElementById('latitude').value){setTimeout(()=>{if(!gpsAttempted&&!document.getElementById('latitude').value)captureGPS({automatic:true})},900);}
+document.getElementById('area')?.addEventListener('focus',()=>{if(!document.getElementById('latitude').value&&!document.getElementById('longitude').value)captureGPS()});
 const mediaInput=document.getElementById('mediaFiles');
 const photoInput=document.getElementById('photoCapture'),videoInput=document.getElementById('videoCapture');
 function selectedMedia(){return [...(photoInput?.files||[]),...(videoInput?.files||[]),...(mediaInput?.files||[])].filter(Boolean).slice(0,3)}
