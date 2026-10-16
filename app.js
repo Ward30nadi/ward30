@@ -83,7 +83,7 @@ form?.addEventListener('submit',async e=>{
  e.preventDefault();const msg=document.getElementById('formMessage'),btn=document.getElementById('submitBtn');const selected=selectedMedia();
  if(selected.length>3){msg.className='error';msg.textContent='Please select no more than 3 files.';return}
  for(const f of selected){const v=String(f.type||'').startsWith('video/'),lim=v?1.5*1024*1024:12*1024*1024;if(f.size>lim){msg.className='error';msg.textContent=(v?'Video':'Photo')+' exceeds the '+(v?'1.5 MB':'12 MB')+' original-file limit. Please choose a smaller file.';return}}
- // Keep submission in this page; WhatsApp is an optional button after success.
+ // Submit in this page; after the server confirms success, navigate this same tab directly to WhatsApp (no blank popup).
  btn.disabled=true;btn.textContent=currentLang==='hi'?'भेजा जा रहा है…':'Submitting…';msg.className='';msg.textContent='Preparing attachments and submitting complaint…';
  const payload={...complaintPayloadFromForm(),ward:'30',locality:'Nadi Mohalla, Pali, Rajasthan'};
  try{
@@ -92,10 +92,14 @@ form?.addEventListener('submit',async e=>{
   msg.className='success';msg.innerHTML=`<b>Complaint registered successfully.</b><br>Complaint ID: <b>${escapeHtml(data.complaintNo)}</b><br>Save this ID to track updates later.`;
   if(data.mediaUrls?.length)msg.innerHTML+=`<br>${data.mediaUrls.length} media file(s) saved to Drive.`;
   const waNumber=window.PORTAL_CONFIG?.PARSHAD_WHATSAPP_NUMBER||'',waText=complaintWhatsAppText(payload,data.complaintNo),waUrl=whatsappLink(waNumber,waText);
-  if(data.whatsappSent){msg.innerHTML+='<br><b>WhatsApp alert sent automatically to the Parshad.</b>'; }
-  else if(waUrl){msg.innerHTML+='<br><span class="muted">Your complaint is saved. WhatsApp is optional.</span><br>';const a=document.createElement('a');a.className='btn primary whatsapp-btn';a.href=waUrl;a.target='_blank';a.rel='noopener';a.textContent='Open WhatsApp to send complaint';msg.appendChild(a);}
-  else{msg.innerHTML+='<br><span class="muted">Configure the Parshad WhatsApp number in config.js.</span>';}
+  if(data.whatsappSent){msg.innerHTML+='<br><b>WhatsApp alert was sent automatically to the Parshad.</b>'; }
   form.reset();[photoInput,videoInput,mediaInput].forEach(x=>{if(x)x.value=''});previewUrls.forEach(u=>URL.revokeObjectURL(u));previewUrls=[];document.getElementById('mediaPreview').innerHTML='';document.getElementById('latitude').value='';document.getElementById('longitude').value='';document.getElementById('accuracy').value='';document.getElementById('gpsStatus').textContent='Location not captured for next complaint yet.';
- }catch(err){msg.className='error';msg.innerHTML=`<b>Complaint could not be registered:</b> ${escapeHtml(err.message)}<br><small>Please retry. WhatsApp is opened only after the backend confirms successful registration.</small>`;}
+  if(waUrl && !data.whatsappSent){
+   msg.innerHTML+='<br><span class="muted">Opening WhatsApp to share the registered complaint. Tap Send in WhatsApp to deliver it.</span>';
+   btn.disabled=true;btn.textContent='Opening WhatsApp…';
+   // Same-tab navigation avoids blocked popups and blank tabs. Wait briefly so the success/ID is visible first.
+   window.setTimeout(()=>{window.location.assign(waUrl)},900);
+  } else if(!waUrl && !data.whatsappSent){msg.innerHTML+='<br><span class="muted">WhatsApp number is not configured in config.js.</span>';}
+ }catch(err){msg.className='error';msg.innerHTML=`<b>Complaint could not be registered:</b> ${escapeHtml(err.message)}<br><small>Please check your connection and retry. WhatsApp opens only after successful registration.</small>`;}
  finally{btn.disabled=false;btn.textContent=currentLang==='hi'?'शिकायत भेजें →':'Submit Complaint →';}
 });
